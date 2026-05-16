@@ -1,0 +1,16 @@
+{
+  "name": "oinone-pamirs",
+  "version": "0.1.0",
+  "description": "Oinone/Pamirs aPaaS 框架研发技能集合：模型/枚举/Action/Hook/异步任务/定时任务/触发任务/EIP 集成/开放接口/Excel 导入导出/权限扩展/GraphQL/XML 视图。Claude Code 通过 skill 按 description 自动触发，Codex CLI 通过 /oinone-* 主动调用。",
+  "author": {
+    "name": "yeshenyue"
+  },
+  "keywords": [
+    "oinone",
+    "pamirs",
+    "aPaaS",
+    "java",
+    "spring-boot",
+    "low-code"
+  ]
+}

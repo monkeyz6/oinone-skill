@@ -1,0 +1,29 @@
+{
+  "name": "oinone-skills-marketplace",
+  "owner": {
+    "name": "yeshenyue"
+  },
+  "metadata": {
+    "description": "Oinone/Pamirs 平台研发技能合集，提供模型/Action/Hook/异步任务/定时任务/触发任务/EIP 集成/开放接口/Excel 导入导出/枚举/权限扩展/GraphQL/XML 视图等 14 项技能。Claude Code 通过 plugin skill 自动触发，Codex CLI 通过 slash command 主动调用。",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "oinone-pamirs",
+      "source": "./plugins/oinone-pamirs",
+      "description": "Oinone/Pamirs aPaaS 框架研发技能集合",
+      "version": "0.1.0",
+      "author": {
+        "name": "yeshenyue"
+      },
+      "category": "framework",
+      "tags": [
+        "oinone",
+        "pamirs",
+        "aPaaS",
+        "java",
+        "spring-boot"
+      ]
+    }
+  ]
+}
