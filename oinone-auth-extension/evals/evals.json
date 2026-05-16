@@ -1,0 +1,51 @@
+{
+  "skill_name": "oinone-auth-extension",
+  "evals": [
+    {
+      "id": 0,
+      "name": "whitelist-open-query",
+      "prompt": "我刚加了一个新的查询接口 namespace=demo.OpenItemQuery，fun=queryItemList，是给海外经销商门户首页调用的，不需要登录。给我两种方案：(1) 直接在 application.yml 里加白名单（最简单的）；(2) 用 AuthFilterService 写一个代码版本（更灵活）。两种方案的 Java/YAML 代码都给我，并说明优缺点和何时选哪个。要能直接拷贝到我们 deli-aries-eip-core 模块里编译运行。",
+      "expected_output": "YAML 方案给出 pamirs.auth.fun-filter 配置；Java 方案给出实现 AuthFilterService 接口、@SPI.Service+@Component+@Order 注解、isAccessFunction 返回 true/null 三态、其他方法返回 null 的样板；说明 fun-filter vs fun-filter-only-login 区别；指出 null vs false 的语义陷阱。",
+      "assertions": [
+        "YAML 使用 pamirs.auth.fun-filter（含 namespace + fun 两个 key）",
+        "YAML 包含正确的 namespace=demo.OpenItemQuery 和 fun=queryItemList",
+        "Java 类实现 pro.shushi.pamirs.auth.api.spi.AuthFilterService 接口",
+        "Java 类同时有 @Component 和 @SPI.Service 注解",
+        "Java 类带 @Order 注解控制优先级",
+        "isAccessFunction 未匹配时返回 null 而不是 false（三态契约）",
+        "说明文档区分 fun-filter（免登录）与 fun-filter-only-login（仅需登录）",
+        "明确推荐 YAML 方案并说明何时选哪个"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "data-permission-creator",
+      "prompt": "我们 trade.SaleOrder 模型现在所有角色都能看到全量订单。新需求：登录用户是「销售员（salesman）」角色时，订单列表只能看到自己 created_by 等于当前用户 id 的订单；其他角色不限制。读、写、删都要限制。请给出一套完整的数据权限实现代码，放在 deli-aries-trade-core 模块。",
+      "assertions": [
+        "使用 AuthFilterService 或 DataPermissionApi 实现数据权限（不是 Hook / MyBatis 拦截器）",
+        "读、写、删三个方法（或对应能力）都被实现/覆盖",
+        "salesman 角色返回 RSQL 过滤条件（包含 created_by 或类似字段）",
+        "非 salesman 角色明确放行（返回 AuthResult.success(null) 或等价语义），不会拦住所有人",
+        "Java 类带 @Component 和 @SPI.Service 注解",
+        "通过 PamirsSession 或会话 API 获取当前用户 id 和角色",
+        "只对 trade.SaleOrder 模型生效（model 参数判断或 getModel 返回 SaleOrder）",
+        "处理了 userId 为空 / 角色无 id 的边界情况"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "sso-cookie-login",
+      "prompt": "我们要对接公司统一的 OAuth2 SSO（不是 Pamirs 内部 SSO）。前端请求会带 Authorization: Bearer <token> 和 loginType: OAUTH 两个 header。后端要做：(1) 拿 token 调 https://sso.deli.com/api/userinfo 获取用户名；(2) 用用户名查 PamirsUser；(3) 把用户写到 Session 完成登录；(4) 验证失败就抛异常拦下来。请给出 UserCookieLogin 的实现样板，含完整的 imports、注解、@Order 设置和 token 验证流程。",
+      "assertions": [
+        "实现 pro.shushi.pamirs.user.api 中的 UserCookieLogin 接口",
+        "带 @Component 和 @Order 注解",
+        "@Order 设置为 0 或显式说明为何选其他值",
+        "服务端调用 SSO userinfo 端点验证 token（RestTemplate / WebClient / HttpClient）",
+        "成功后将用户写入 PamirsSession",
+        "失败抛 PamirsException 或 RuntimeException 拦截请求",
+        "通过 header 区分 loginType: OAUTH，非 OAUTH 返回 null 把控制权交回默认登录链",
+        "imports 使用 javax.servlet（Spring Boot 2.3.8），不是 jakarta.servlet"
+      ]
+    }
+  ]
+}

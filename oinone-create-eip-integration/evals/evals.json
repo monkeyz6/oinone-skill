@@ -1,0 +1,54 @@
+{
+  "skill_name": "oinone-create-eip-integration",
+  "evals": [
+    {
+      "id": 0,
+      "name": "zoro-json-full",
+      "prompt": "我需要在 deli-b2b-oversea 项目里对接 ZORO 平台的库存推送接口。接口信息：POST 到 https://api.zoroapi.com/openapi/inventory/push ，Header 里要带 X-Auth-Token 用于鉴权，请求体是 JSON，字段是 skuCode（String）和 stockQty（Integer），响应是标准 JSON {code, msg, data}，code=0 表示成功。麻烦把整套 EIP 集成代码生成出来。",
+      "files": [],
+      "assertions": [
+        "Service interface generated under deli-aries-eip-api with @Fun + @Function and FUN_NAMESPACE constant",
+        "EipConfig implements IEipAnnotationSingletonConfig and declares schema + host + construct() (@Function QUERY)",
+        "Constants file exposes /openapi/inventory/push as public static final String",
+        "Service impl annotated @Integrate + @Integrate.Advanced(path=Constants.XXX), method body is exactly 'return null;'",
+        "Service impl method return type is EipResult<SuperMap>",
+        "@Integrate.RequestProcessor.finalResultKey is explicitly set (prevents token bleed into body)",
+        "@Integrate.RequestProcessor.convertParams maps X-Auth-Token to HEADER position",
+        "EipConfig has no getter/setter and no Lombok",
+        "Service impl method body is only 'return null;' (no real call code)"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "sinosure-xml-bidirectional",
+      "prompt": "在 deli-b2b-oversea 里对接印尼中信保 CRM 的 doBprBuyerCodeApply 接口。CRM 那边暴露的是 SOAP 1.1 风格的 XML 接口，URL 是 http://crmhwtest.nbdeli.com:8070/Interface.asmx ，请求体是 XML（包含 buyerName / countryCode / applyDate 等字段），响应也是 XML（retCode / retMsg / serialNo）。请把这个 EIP 集成接口完整生成，包括 XML 序列化/反序列化处理。",
+      "files": [],
+      "assertions": [
+        "XmlSerializable class exists with FUNCTION_NAME like EIP_SERIALIZABLE_<ClassName>_stringToSuperMap",
+        "XmlInOutConverter class exists with FUNCTION_NAME like EIP_IN_OUT_CONVERTER_<ClassName>_exchangeObject",
+        "Both XmlSerializable and XmlInOutConverter @Fun namespace is EipConfigurationConstant.FUNCTION_NAMESPACE",
+        "Service impl @Integrate.RequestProcessor sets finalResultKey AND inOutConverterFun + inOutConverterNamespace",
+        "Service impl @Integrate.ResponseProcessor sets serializableFun + serializableNamespace",
+        "InOutConverter.exchangeObject sets Content-Type to application/xml or text/xml",
+        "Service impl method body is 'return null;' returning EipResult<SuperMap>",
+        "EipConfig schema defaults to http (URL is http://) and host matches crmhwtest.nbdeli.com:8070",
+        "Constants file declares /Interface.asmx"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "dingtalk-skeleton",
+      "prompt": "我后面要做一个钉钉群机器人发消息的对接，目前就知道是 POST 调用钉钉的 webhook，请求体大概是 markdown 内容。具体路径和签名细节我之后再补。先把代码骨架搭起来。",
+      "files": [],
+      "assertions": [
+        "All four skeleton files generated: Service, EipConfig, Constants, Service impl",
+        "Constants uses TODO markers for the unknown webhook path (no fabricated path)",
+        "Service impl method body is 'return null;' even in skeleton mode",
+        "Service impl carries @Integrate(config=...) + @Integrate.Advanced annotations referencing Constants",
+        "EipConfig implements IEipAnnotationSingletonConfig with construct() skeleton",
+        "CHANGES.md lists TODO fields and what the user must fill in",
+        "No getter/setter or Lombok on Config"
+      ]
+    }
+  ]
+}
